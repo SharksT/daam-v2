@@ -739,9 +739,6 @@ dependencies = [
  "num",
  "num-traits",
  "num_enum",
- "pinocchio",
- "pinocchio-token",
- "pinocchio-token-2022",
  "proptest",
  "ruint",
  "spl-token-metadata-interface",
@@ -1433,39 +1430,6 @@ dependencies = [
  "memchr",
  "thiserror 2.0.12",
  "ucd-trie",
-]
-
-[[package]]
-name = "pinocchio"
-version = "0.9.0"
-source = "git+https://github.com/anza-xyz/pinocchio.git?rev=17b0e862c01a868ea07ef81a2f8a9b4a504bdfed#17b0e862c01a868ea07ef81a2f8a9b4a504bdfed"
-
-[[package]]
-name = "pinocchio-pubkey"
-version = "0.3.0"
-source = "git+https://github.com/anza-xyz/pinocchio.git?rev=17b0e862c01a868ea07ef81a2f8a9b4a504bdfed#17b0e862c01a868ea07ef81a2f8a9b4a504bdfed"
-dependencies = [
- "five8_const",
- "pinocchio",
- "sha2-const-stable",
-]
-
-[[package]]
-name = "pinocchio-token"
-version = "0.4.0"
-source = "git+https://github.com/anza-xyz/pinocchio.git?rev=17b0e862c01a868ea07ef81a2f8a9b4a504bdfed#17b0e862c01a868ea07ef81a2f8a9b4a504bdfed"
-dependencies = [
- "pinocchio",
- "pinocchio-pubkey",
-]
-
-[[package]]
-name = "pinocchio-token-2022"
-version = "0.1.0"
-source = "git+https://github.com/anza-xyz/pinocchio.git?rev=17b0e862c01a868ea07ef81a2f8a9b4a504bdfed#17b0e862c01a868ea07ef81a2f8a9b4a504bdfed"
-dependencies = [
- "pinocchio",
- "pinocchio-pubkey",
 ]
 
 [[package]]

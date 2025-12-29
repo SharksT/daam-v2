@@ -1,9 +1,6 @@
 pub mod ix_swap;
 pub use ix_swap::*;
 
-pub mod ix_p_swap;
-pub use ix_p_swap::*;
-
 pub mod swap_exact_in;
 pub use swap_exact_in::*;
 
@@ -17,11 +14,13 @@ use crate::{
     params::swap::TradeDirection,
     state::{fee::FeeMode, Pool, SwapResult2},
 };
+use anchor_lang::prelude::*;
+use anchor_spl::token_interface::Mint;
 
-pub struct ProcessSwapParams<'a> {
+pub struct ProcessSwapParams<'a, 'info> {
     pub pool: &'a Pool,
-    pub token_in_mint: &'a pinocchio::account_info::AccountInfo,
-    pub token_out_mint: &'a pinocchio::account_info::AccountInfo,
+    pub token_in_mint: &'a InterfaceAccount<'info, Mint>,
+    pub token_out_mint: &'a InterfaceAccount<'info, Mint>,
     pub fee_mode: &'a FeeMode,
     pub trade_direction: TradeDirection,
     pub current_point: u64,

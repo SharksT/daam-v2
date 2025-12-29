@@ -2404,35 +2404,6 @@ export function getFeeShedulerParams(
   };
 }
 
-export async function buildSwapTestTxs(params: {
-  payer: PublicKey;
-  pool: PublicKey;
-  tokenAMint: PublicKey;
-  tokenBMint: PublicKey;
-  inputTokenAccount: PublicKey;
-  outputTokenAccount: PublicKey;
-  tokenAVault: PublicKey;
-  tokenBVault: PublicKey;
-  tokenAProgram: PublicKey;
-  tokenBProgram: PublicKey;
-  poolAuthority?: PublicKey;
-  eventAuthority?: PublicKey;
-  programPk?: PublicKey;
-  sysvarInstructionPubkey?: PublicKey;
-  referralAccount?: PublicKey;
-  amount0: BN;
-  amount1: BN;
-  swapMode: number;
-}): Promise<{ swapTestTx: Transaction; swapPinocchioTx: Transaction }> {
-  const program = createCpAmmProgram();
-  const swapTestTx = await getSwapTransaction(program.methods.swapTest, params);
-  const swapPinocchioTx = await getSwapTransaction(
-    program.methods.swap2,
-    params
-  );
-  return { swapTestTx, swapPinocchioTx };
-}
-
 async function getSwapTransaction(
   swapMethod,
   params: {

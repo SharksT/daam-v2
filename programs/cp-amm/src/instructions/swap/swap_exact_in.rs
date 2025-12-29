@@ -5,7 +5,9 @@ use crate::{
 };
 use anchor_lang::prelude::*;
 
-pub fn process_swap_exact_in<'a>(params: ProcessSwapParams<'a>) -> Result<ProcessSwapResult> {
+pub fn process_swap_exact_in<'a, 'info>(
+    params: ProcessSwapParams<'a, 'info>,
+) -> Result<ProcessSwapResult> {
     let ProcessSwapParams {
         amount_0: amount_in,
         amount_1: minimum_amount_out,
@@ -19,6 +21,7 @@ pub fn process_swap_exact_in<'a>(params: ProcessSwapParams<'a>) -> Result<Proces
 
     let excluded_transfer_fee_amount_in = calculate_transfer_fee_excluded_amount(
         &token_in_mint
+            .to_account_info()
             .try_borrow_data()
             .map_err(|_| ProgramError::AccountBorrowFailed)?,
         amount_in,
@@ -36,6 +39,7 @@ pub fn process_swap_exact_in<'a>(params: ProcessSwapParams<'a>) -> Result<Proces
 
     let excluded_transfer_fee_amount_out = calculate_transfer_fee_excluded_amount(
         &token_out_mint
+            .to_account_info()
             .try_borrow_data()
             .map_err(|_| ProgramError::AccountBorrowFailed)?,
         swap_result.output_amount,

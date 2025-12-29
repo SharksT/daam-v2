@@ -6,7 +6,9 @@ use crate::{
     PoolError,
 };
 
-pub fn process_swap_exact_out<'a>(params: ProcessSwapParams<'a>) -> Result<ProcessSwapResult> {
+pub fn process_swap_exact_out<'a, 'info>(
+    params: ProcessSwapParams<'a, 'info>,
+) -> Result<ProcessSwapResult> {
     let ProcessSwapParams {
         pool,
         token_in_mint,
@@ -20,6 +22,7 @@ pub fn process_swap_exact_out<'a>(params: ProcessSwapParams<'a>) -> Result<Proce
 
     let included_transfer_fee_amount_out = calculate_transfer_fee_included_amount(
         &token_out_mint
+            .to_account_info()
             .try_borrow_data()
             .map_err(|_| ProgramError::AccountBorrowFailed)?,
         amount_out,
@@ -39,6 +42,7 @@ pub fn process_swap_exact_out<'a>(params: ProcessSwapParams<'a>) -> Result<Proce
 
     let included_transfer_fee_amount_in = calculate_transfer_fee_included_amount(
         &token_in_mint
+            .to_account_info()
             .try_borrow_data()
             .map_err(|_| ProgramError::AccountBorrowFailed)?,
         swap_result.included_fee_input_amount,
