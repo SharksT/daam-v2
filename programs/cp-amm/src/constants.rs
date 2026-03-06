@@ -194,7 +194,8 @@ pub mod seeds {
 }
 
 pub mod treasury {
-    use anchor_lang::{prelude::Pubkey, solana_program::pubkey};
+    use anchor_lang::prelude::Pubkey;
+    use anchor_lang::pubkey;
     // https://app.squads.so/squads/4EWqcx3aNZmMetCnxwLYwyNjan6XLGp3Ca2W316vrSjv/treasury
     pub const ID: Pubkey = pubkey!("4EWqcx3aNZmMetCnxwLYwyNjan6XLGp3Ca2W316vrSjv");
 }
