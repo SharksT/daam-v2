@@ -5,7 +5,7 @@ use crate::{
     constants::{seeds::CONFIG_PREFIX, MAX_SQRT_PRICE, MIN_SQRT_PRICE},
     event,
     params::{activation::ActivationParams, fee_parameters::PoolFeeParameters},
-    state::{CollectFeeMode, Config, Operator, OperatorPermission},
+    state::{CollectFeeMode, Config, Operator},
     PoolError,
 };
 
@@ -33,12 +33,9 @@ pub struct CreateConfigCtx<'info> {
     )]
     pub config: AccountLoader<'info, Config>,
 
-    #[account(
-        has_one = whitelisted_address
-    )]
     pub operator: AccountLoader<'info, Operator>,
 
-    pub whitelisted_address: Signer<'info>,
+    pub signer: Signer<'info>,
 
     #[account(mut)]
     pub payer: Signer<'info>,
@@ -51,12 +48,6 @@ pub fn handle_create_static_config(
     index: u64,
     config_parameters: StaticConfigParameters,
 ) -> Result<()> {
-    let operator = ctx.accounts.operator.load()?;
-    require!(
-        operator.is_permission_allow(OperatorPermission::CreateConfigKey),
-        PoolError::InvalidAuthority
-    );
-
     let StaticConfigParameters {
         pool_fees,
         vault_config_key,
@@ -67,15 +58,25 @@ pub fn handle_create_static_config(
         collect_fee_mode,
     } = config_parameters;
 
-    require!(
-        sqrt_min_price >= MIN_SQRT_PRICE && sqrt_max_price <= MAX_SQRT_PRICE,
-        PoolError::InvalidPriceRange
-    );
+    let pool_collect_fee_mode =
+        CollectFeeMode::try_from(collect_fee_mode).map_err(|_| PoolError::InvalidCollectFeeMode)?;
 
-    require!(
-        sqrt_min_price < sqrt_max_price,
-        PoolError::InvalidPriceRange
-    );
+    if pool_collect_fee_mode == CollectFeeMode::Compounding {
+        require!(
+            sqrt_min_price == 0 && sqrt_max_price == u128::MAX,
+            PoolError::InvalidPriceRange
+        );
+    } else {
+        require!(
+            sqrt_min_price >= MIN_SQRT_PRICE && sqrt_max_price <= MAX_SQRT_PRICE,
+            PoolError::InvalidPriceRange
+        );
+
+        require!(
+            sqrt_min_price < sqrt_max_price,
+            PoolError::InvalidPriceRange
+        );
+    }
 
     let has_alpha_vault = vault_config_key.ne(&Pubkey::default());
 
@@ -92,9 +93,6 @@ pub fn handle_create_static_config(
 
     let pool_activation_type =
         ActivationType::try_from(activation_type).map_err(|_| PoolError::InvalidActivationType)?;
-
-    let pool_collect_fee_mode =
-        CollectFeeMode::try_from(collect_fee_mode).map_err(|_| PoolError::InvalidCollectFeeMode)?;
 
     pool_fees.validate(pool_collect_fee_mode, pool_activation_type)?;
 

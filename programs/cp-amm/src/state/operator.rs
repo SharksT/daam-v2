@@ -26,6 +26,8 @@ pub enum OperatorPermission {
     UpdateRewardFunder,   // 7
     UpdatePoolFees,       // 8
     ClaimProtocolFee,     // 9
+    ZapProtocolFee,       // 10
+    FixPool,              // 11
 }
 
 #[account(zero_copy)]

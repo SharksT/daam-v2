@@ -10,11 +10,23 @@ export const ALPHA_VAULT_PROGRAM_ID = new PublicKey(
 );
 
 export const TREASURY = new PublicKey(
-  "4EWqcx3aNZmMetCnxwLYwyNjan6XLGp3Ca2W316vrSjv"
+  "6aYhxiNGmG8AyU25rh2R7iFu4pBrqnQHpNUGhmsEXRcm"
 );
 
 export const NATIVE_MINT = new PublicKey(
   "So11111111111111111111111111111111111111112"
+);
+
+export const JUPITER_V6_PROGRAM_ID = new PublicKey(
+  "JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4"
+);
+
+export const ZAP_PROGRAM_ID = new PublicKey(
+  "zapvX9M3uf5pvy4wRPAbQgdQsM1xmuiFnkfHKPvwMiz"
+);
+
+export const JUP_V6_EVENT_AUTHORITY = new PublicKey(
+  "D8cy77BBepLMngZx6ZukaTff5hCt1HrWyKk3Hnd9oitf"
 );
 
 export const MIN_SQRT_PRICE = new BN("4295048016");
@@ -26,6 +38,7 @@ export const DECIMALS = 9;
 export const BASIS_POINT_MAX = 10_000;
 export const OFFSET = 64;
 export const U64_MAX = new BN("18446744073709551615");
+export const U128_MAX = new BN("340282366920938463463374607431768211455");
 export const MAX_FEE_BPS = 9900;
 export const MAX_FEE_NUMERATOR = 990_000_000;
 export const MIN_FEE_NUMERATOR = 100_000;

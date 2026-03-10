@@ -29,7 +29,6 @@ import {
   swapExactIn,
   SwapParams,
   warpSlotBy,
-  warpToTimestamp,
 } from "./helpers";
 import { generateKpAndFund } from "./helpers/common";
 import {
@@ -96,7 +95,8 @@ describe("Lock position", () => {
           baseFee: {
             data: Array.from(data),
           },
-          padding: [],
+          compoundingFeeBps: 0,
+          padding: 0,
           dynamicFee: null,
         },
         sqrtMinPrice: new BN(MIN_SQRT_PRICE),
@@ -199,16 +199,28 @@ describe("Lock position", () => {
         expect(positionState.vestedLiquidity.eq(liquidityToLock)).to.be.true;
 
         const vestingState = getVesting(svm, vesting);
-        console.log("cliffPoint: ", vestingState.cliffPoint.toString());
-        expect(!vestingState.cliffPoint.isZero()).to.be.true;
-        expect(vestingState.cliffUnlockLiquidity.eq(cliffUnlockLiquidity)).to.be
-          .true;
-        expect(vestingState.liquidityPerPeriod.eq(liquidityPerPeriod)).to.be
-          .true;
-        expect(vestingState.numberOfPeriod).to.be.equal(numberOfPeriod);
+
+        console.log(
+          "cliffPoint: ",
+          vestingState.innerVesting.cliffPoint.toString()
+        );
+        expect(!vestingState.innerVesting.cliffPoint.isZero()).to.be.true;
+        expect(
+          vestingState.innerVesting.cliffUnlockLiquidity.eq(
+            cliffUnlockLiquidity
+          )
+        ).to.be.true;
+        expect(
+          vestingState.innerVesting.liquidityPerPeriod.eq(liquidityPerPeriod)
+        ).to.be.true;
+        expect(vestingState.innerVesting.numberOfPeriod).to.be.equal(
+          numberOfPeriod
+        );
         expect(vestingState.position.equals(position)).to.be.true;
-        expect(vestingState.totalReleasedLiquidity.isZero()).to.be.true;
-        expect(vestingState.periodFrequency.eq(new BN(1))).to.be.true;
+        expect(vestingState.innerVesting.totalReleasedLiquidity.isZero()).to.be
+          .true;
+        expect(vestingState.innerVesting.periodFrequency.eq(new BN(1))).to.be
+          .true;
       });
 
       it("Able to claim fee", async () => {
@@ -260,15 +272,22 @@ describe("Lock position", () => {
 
         expect(positionLiquidityDelta.eq(vestedLiquidityDelta)).to.be.true;
 
-        expect(vestedLiquidityDelta.eq(afterVestingState.cliffUnlockLiquidity))
-          .to.be.true;
+        expect(
+          vestedLiquidityDelta.eq(
+            afterVestingState.innerVesting.cliffUnlockLiquidity
+          )
+        ).to.be.true;
 
-        vestedLiquidityDelta = afterVestingState.totalReleasedLiquidity.sub(
-          beforeVestingState.totalReleasedLiquidity
-        );
+        vestedLiquidityDelta =
+          afterVestingState.innerVesting.totalReleasedLiquidity.sub(
+            beforeVestingState.innerVesting.totalReleasedLiquidity
+          );
 
-        expect(vestedLiquidityDelta.eq(afterVestingState.cliffUnlockLiquidity))
-          .to.be.true;
+        expect(
+          vestedLiquidityDelta.eq(
+            afterVestingState.innerVesting.cliffUnlockLiquidity
+          )
+        ).to.be.true;
       });
 
       it("Withdraw period", async () => {
@@ -400,7 +419,8 @@ describe("Lock position", () => {
           baseFee: {
             data: Array.from(data),
           },
-          padding: [],
+          compoundingFeeBps: 0,
+          padding: 0,
           dynamicFee: null,
         },
         sqrtMinPrice: new BN(MIN_SQRT_PRICE),
@@ -504,15 +524,23 @@ describe("Lock position", () => {
         expect(positionState.vestedLiquidity.eq(liquidityToLock)).to.be.true;
 
         const vestingState = getVesting(svm, vesting);
-        expect(!vestingState.cliffPoint.isZero()).to.be.true;
-        expect(vestingState.cliffUnlockLiquidity.eq(cliffUnlockLiquidity)).to.be
-          .true;
-        expect(vestingState.liquidityPerPeriod.eq(liquidityPerPeriod)).to.be
-          .true;
-        expect(vestingState.numberOfPeriod).to.be.equal(numberOfPeriod);
+        expect(!vestingState.innerVesting.cliffPoint.isZero()).to.be.true;
+        expect(
+          vestingState.innerVesting.cliffUnlockLiquidity.eq(
+            cliffUnlockLiquidity
+          )
+        ).to.be.true;
+        expect(
+          vestingState.innerVesting.liquidityPerPeriod.eq(liquidityPerPeriod)
+        ).to.be.true;
+        expect(vestingState.innerVesting.numberOfPeriod).to.be.equal(
+          numberOfPeriod
+        );
         expect(vestingState.position.equals(position)).to.be.true;
-        expect(vestingState.totalReleasedLiquidity.isZero()).to.be.true;
-        expect(vestingState.periodFrequency.eq(new BN(1))).to.be.true;
+        expect(vestingState.innerVesting.totalReleasedLiquidity.isZero()).to.be
+          .true;
+        expect(vestingState.innerVesting.periodFrequency.eq(new BN(1))).to.be
+          .true;
       });
 
       it("Able to claim fee", async () => {
@@ -564,15 +592,22 @@ describe("Lock position", () => {
 
         expect(positionLiquidityDelta.eq(vestedLiquidityDelta)).to.be.true;
 
-        expect(vestedLiquidityDelta.eq(afterVestingState.cliffUnlockLiquidity))
-          .to.be.true;
+        expect(
+          vestedLiquidityDelta.eq(
+            afterVestingState.innerVesting.cliffUnlockLiquidity
+          )
+        ).to.be.true;
 
-        vestedLiquidityDelta = afterVestingState.totalReleasedLiquidity.sub(
-          beforeVestingState.totalReleasedLiquidity
-        );
+        vestedLiquidityDelta =
+          afterVestingState.innerVesting.totalReleasedLiquidity.sub(
+            beforeVestingState.innerVesting.totalReleasedLiquidity
+          );
 
-        expect(vestedLiquidityDelta.eq(afterVestingState.cliffUnlockLiquidity))
-          .to.be.true;
+        expect(
+          vestedLiquidityDelta.eq(
+            afterVestingState.innerVesting.cliffUnlockLiquidity
+          )
+        ).to.be.true;
       });
 
       it("Withdraw period", async () => {

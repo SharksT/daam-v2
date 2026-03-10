@@ -1,4 +1,5 @@
 use anchor_lang::constant;
+use anchor_lang::prelude::*;
 
 pub const MIN_SQRT_PRICE: u128 = 4295048016;
 
@@ -53,12 +54,17 @@ pub const SPLIT_POSITION_DENOMINATOR: u32 = 1_000_000_000; // 1b
 pub const MAX_RATE_LIMITER_DURATION_IN_SECONDS: u32 = 60 * 60 * 12; // 12 hours
 pub const MAX_RATE_LIMITER_DURATION_IN_SLOTS: u32 = 108000; // 12 hours
 
-pub const MAX_OPERATION: u8 = 10;
+pub const MAX_OPERATION: u8 = 12;
 
 static_assertions::const_assert_eq!(
     MAX_RATE_LIMITER_DURATION_IN_SECONDS * 1000 / 400,
     MAX_RATE_LIMITER_DURATION_IN_SLOTS
 );
+
+const OKX_SMART_WALLET: Pubkey =
+    Pubkey::from_str_const("va1t8sdGkReA6XFgAeZGXmdQoiEtMirwy4ifLv7yGdH");
+
+pub const RATE_LIMITER_STACK_WHITELIST_PROGRAMS: [[u8; 32]; 1] = [OKX_SMART_WALLET.to_bytes()];
 
 pub mod activation {
     #[cfg(not(feature = "local"))]
@@ -106,9 +112,11 @@ pub mod fee {
 
     /// Max fee BPS
     pub const MAX_FEE_BPS_V0: u64 = 5000; // 50%
+    #[constant]
     pub const MAX_FEE_NUMERATOR_V0: u64 = 500_000_000; // 50%
 
     pub const MAX_FEE_BPS_V1: u64 = 9900; // 99%
+    #[constant]
     pub const MAX_FEE_NUMERATOR_V1: u64 = 990_000_000; // 99%
 
     /// max fee numerator operator could update for a pool
@@ -116,23 +124,24 @@ pub mod fee {
 
     /// Max basis point. 100% in pct
     #[constant]
-    pub const MAX_BASIS_POINT: u64 = 10_000;
+    pub const MAX_BASIS_POINT: u16 = 10_000;
 
     pub const MIN_FEE_BPS: u64 = 1; // 0.01%
+    #[constant]
     pub const MIN_FEE_NUMERATOR: u64 = 100_000;
 
     static_assertions::const_assert_eq!(
-        MAX_FEE_BPS_V0 * FEE_DENOMINATOR / MAX_BASIS_POINT,
+        MAX_FEE_BPS_V0 * FEE_DENOMINATOR / MAX_BASIS_POINT as u64,
         MAX_FEE_NUMERATOR_V0
     );
 
     static_assertions::const_assert_eq!(
-        MAX_FEE_BPS_V1 * FEE_DENOMINATOR / MAX_BASIS_POINT,
+        MAX_FEE_BPS_V1 * FEE_DENOMINATOR / MAX_BASIS_POINT as u64,
         MAX_FEE_NUMERATOR_V1
     );
 
     static_assertions::const_assert_eq!(
-        MIN_FEE_BPS * FEE_DENOMINATOR / MAX_BASIS_POINT,
+        MIN_FEE_BPS * FEE_DENOMINATOR / MAX_BASIS_POINT as u64,
         MIN_FEE_NUMERATOR
     );
 
@@ -140,24 +149,22 @@ pub mod fee {
 
     pub const HOST_FEE_PERCENT: u8 = 20; // 20% of protocol fee
 
-    pub const PARTNER_FEE_PERCENT: u8 = 0; // percentage of partner fee
-
     static_assertions::const_assert!(PROTOCOL_FEE_PERCENT <= 50);
     static_assertions::const_assert!(HOST_FEE_PERCENT <= 50);
-    static_assertions::const_assert!(PARTNER_FEE_PERCENT <= 50);
 
+    #[constant]
     pub const CURRENT_POOL_VERSION: u8 = 1;
 
-    pub fn get_max_fee_numerator(pool_version: u8) -> Result<u64> {
-        match pool_version {
+    pub fn get_max_fee_numerator(fee_version: u8) -> Result<u64> {
+        match fee_version {
             0 => Ok(MAX_FEE_NUMERATOR_V0),
             1 => Ok(MAX_FEE_NUMERATOR_V1),
             _ => Err(PoolError::InvalidPoolVersion.into()),
         }
     }
 
-    pub fn get_max_fee_bps(pool_version: u8) -> Result<u64> {
-        match pool_version {
+    pub fn get_max_fee_bps(fee_version: u8) -> Result<u64> {
+        match fee_version {
             0 => Ok(MAX_FEE_BPS_V0),
             1 => Ok(MAX_FEE_BPS_V1),
             _ => Err(PoolError::InvalidPoolVersion.into()),
@@ -196,6 +203,6 @@ pub mod seeds {
 pub mod treasury {
     use anchor_lang::prelude::Pubkey;
     use anchor_lang::pubkey;
-    // https://app.squads.so/squads/4EWqcx3aNZmMetCnxwLYwyNjan6XLGp3Ca2W316vrSjv/treasury
-    pub const ID: Pubkey = pubkey!("4EWqcx3aNZmMetCnxwLYwyNjan6XLGp3Ca2W316vrSjv");
+    // https://app.squads.so/squads/6aYhxiNGmG8AyU25rh2R7iFu4pBrqnQHpNUGhmsEXRcm/treasury
+    pub const ID: Pubkey = pubkey!("6aYhxiNGmG8AyU25rh2R7iFu4pBrqnQHpNUGhmsEXRcm");
 }

@@ -583,7 +583,6 @@ describe("Admin update pool fees parameters", () => {
       cliffFeeNumerator.toString()
     );
     expect(postBaseFee.numberOfPeriod).eq(beforeBaseFee.numberOfPeriod);
-    expect(postBaseFee.priceStepBps).eq(beforeBaseFee.priceStepBps);
     expect(postBaseFee.schedulerExpirationDuration).eq(
       beforeBaseFee.schedulerExpirationDuration
     );
@@ -616,7 +615,8 @@ async function createPool(
       baseFee: {
         data: Array.from(baseFeeData),
       },
-      padding: [],
+      compoundingFeeBps: 0,
+      padding: 0,
       dynamicFee,
     },
     activationType: 0,
